@@ -1,16 +1,18 @@
 package paragraph
 
+//go-bindata -pkg paragraph data/
+
 import (
 	"bufio"
+	"bytes"
 	"log"
 	"math/rand"
-	"os"
 	"strings"
 )
 
-func countLines(file *os.File) int {
-	fileScanner := bufio.NewScanner(file)
-	defer file.Seek(0, 0)
+func countLines(data *bytes.Reader) int {
+	fileScanner := bufio.NewScanner(data)
+	defer data.Seek(0, 0)
 
 	lineCount := 0
 	for fileScanner.Scan() {
@@ -21,18 +23,18 @@ func countLines(file *os.File) int {
 }
 
 func readEnable1() []string {
-	file, err := os.Open("enable1.txt")
+	data, err := Asset("data/enable1.txt")
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
 
-	lineCount := countLines(file)
+	reader := bytes.NewReader(data)
+	lineCount := countLines(reader)
 	lines := make([]string, lineCount)
 
 	lineNumber := 0
-	fileScanner := bufio.NewScanner(file)
+	fileScanner := bufio.NewScanner(reader)
 	for fileScanner.Scan() {
 		lines[lineNumber] = fileScanner.Text()
 		lineNumber++
